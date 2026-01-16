@@ -14,7 +14,7 @@ const users = [
 
 // ==================== JWT ROUTES ====================
 
-// Login endpoint
+// Login endpoint - Trả về Access Token + Refresh Token
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -25,8 +25,8 @@ app.post('/login', (req, res) => {
     return res.status(401).json({ message: '❌ Invalid username or password' });
   }
 
-  // Tạo token
-  const token = jwtManager.generateToken({
+  // Tạo Access Token + Refresh Token (new way)
+  const tokenPair = jwtManager.generateTokenPair({
     id: user.id,
     username: user.username,
     loginTime: new Date().toISOString()
@@ -34,12 +34,14 @@ app.post('/login', (req, res) => {
 
   res.json({
     message: '✅ Login successful',
-    token: token,
+    accessToken: tokenPair.accessToken,
+    refreshToken: tokenPair.refreshToken,
+    expiresIn: tokenPair.expiresIn,
     user: { id: user.id, username: user.username }
   });
 });
 
-// Verify token endpoint
+// Verify Access Token endpoint
 app.post('/verify-token', (req, res) => {
   const { token } = req.body;
 
@@ -47,16 +49,58 @@ app.post('/verify-token', (req, res) => {
     return res.status(400).json({ message: '❌ Token is required' });
   }
 
-  const decoded = jwtManager.verifyToken(token);
+  const decoded = jwtManager.verifyAccessToken(token);
 
   if (!decoded) {
     return res.status(401).json({ message: '❌ Invalid or expired token' });
   }
 
   res.json({
-    message: '✅ Token is valid',
+    message: '✅ Access Token is valid',
     data: decoded
   });
+});
+
+// Refresh Token endpoint - Tạo Access Token mới
+app.post('/refresh-token', (req, res) => {
+  const { refreshToken, userId } = req.body;
+
+  if (!refreshToken || !userId) {
+    return res.status(400).json({ 
+      message: '❌ Refresh token and userId are required' 
+    });
+  }
+
+  const result = jwtManager.refreshAccessToken(refreshToken, userId);
+
+  if (!result) {
+    return res.status(401).json({ 
+      message: '❌ Invalid or expired refresh token' 
+    });
+  }
+
+  res.json({
+    message: '✅ Access Token refreshed successfully',
+    accessToken: result.accessToken,
+    expiresIn: result.expiresIn
+  });
+});
+
+// Logout endpoint - Xóa Refresh Token
+app.post('/logout', (req, res) => {
+  const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ message: '❌ userId is required' });
+  }
+
+  const success = jwtManager.logout(userId);
+
+  if (success) {
+    res.json({ message: '✅ Logged out successfully' });
+  } else {
+    res.status(500).json({ message: '❌ Logout failed' });
+  }
 });
 
 // ==================== MESSAGE QUEUE ROUTES ====================
