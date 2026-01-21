@@ -1,0 +1,113 @@
+╔════════════════════════════════════════════════════════════════╗
+║         GEMINI CHATBOX API - POSTMAN TEST GUIDE                 ║
+╚════════════════════════════════════════════════════════════════╝
+
+📌 BASE URL: http://localhost:3000/api
+
+═══════════════════════════════════════════════════════════════════
+
+✅ ENDPOINT 1: SEND MESSAGE TO GEMINI
+───────────────────────────────────────────────────────────────────
+
+Method: POST
+URL: http://localhost:3000/api/chat
+
+Headers:
+  Content-Type: application/json
+
+Body (JSON):
+{
+  "userId": "user123",
+  "message": "Hello, how are you?"
+}
+
+Example Response (Success):
+{
+  "success": true,
+  "message": "I'm doing well, thank you for asking! How can I help you today?",
+  "timestamp": "2025-01-21T10:30:45.123Z"
+}
+
+═══════════════════════════════════════════════════════════════════
+
+✅ ENDPOINT 2: GET CHAT HISTORY
+───────────────────────────────────────────────────────────────────
+
+Method: GET
+URL: http://localhost:3000/api/chat/history/user123
+
+Example Response:
+{
+  "success": true,
+  "userId": "user123",
+  "history": [
+    {
+      "role": "user",
+      "parts": [{ "text": "Hello, how are you?" }]
+    },
+    {
+      "role": "model",
+      "parts": [{ "text": "I'm doing well..." }]
+    }
+  ],
+  "totalMessages": 2
+}
+
+═══════════════════════════════════════════════════════════════════
+
+✅ ENDPOINT 3: CLEAR CHAT HISTORY
+───────────────────────────────────────────────────────────────────
+
+Method: DELETE
+URL: http://localhost:3000/api/chat/history/user123
+
+Example Response:
+{
+  "success": true,
+  "message": "Chat history cleared for user user123"
+}
+
+═══════════════════════════════════════════════════════════════════
+
+🚀 HOW TO TEST:
+
+1. Open Postman
+2. Start the server: npm start
+3. Make requests to the endpoints above
+4. Try sending different messages to see Gemini responses
+5. View chat history to see the conversation
+
+═══════════════════════════════════════════════════════════════════
+
+📋 TEST CASES:
+
+Test 1: Simple greeting
+  POST /api/chat
+  {"userId": "user1", "message": "Hi"}
+
+Test 2: Ask a question
+  POST /api/chat
+  {"userId": "user1", "message": "What is the capital of France?"}
+
+Test 3: Continue conversation
+  POST /api/chat
+  {"userId": "user1", "message": "Tell me more about it"}
+
+Test 4: View history
+  GET /api/chat/history/user1
+
+Test 5: Clear history
+  DELETE /api/chat/history/user1
+
+═══════════════════════════════════════════════════════════════════
+
+💡 FEATURES:
+
+✓ Send messages to Gemini AI
+✓ Maintain conversation history per user
+✓ Multi-user support (different userId = different chat)
+✓ Timestamp for each message
+✓ Easy to test with Postman
+✓ Error handling
+
+═══════════════════════════════════════════════════════════════════
