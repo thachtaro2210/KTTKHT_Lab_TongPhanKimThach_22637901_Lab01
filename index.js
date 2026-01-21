@@ -4,10 +4,14 @@ const jwtManager = require('./jwt');
 const { ROLES, PERMISSIONS, hasPermission, getPermissionsForRole } = require('./roles');
 const { THEMES, ThemeManager } = require('./theme');
 const { authMiddleware, roleMiddleware, permissionMiddleware } = require('./middleware');
+const chatRoutes = require('./chatRoutes');
 require('dotenv').config();
 
 const app = express();
 app.use(express.json());
+
+// Mount chat routes
+app.use('/api', chatRoutes);
 
 // Initialize Theme Manager
 const themeManager = new ThemeManager();
