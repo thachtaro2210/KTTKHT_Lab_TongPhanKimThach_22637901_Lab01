@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const GEMINI_API_KEY = "AIzaSyBkpBpE22FyiNaMwwVJ_8UYmAiWlj-xGQw";
+const GEMINI_API_KEY = "key";
 const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent";
 
 class GeminiChatService {
